@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper  
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace: 代表这个文件的命名空间,根据这个名称可以定位到这个文件 -->
+<mapper namespace="com.zhiyou.mapper.CourseMapper">
+	
+	<insert id="add" parameterType="course">
+		insert into course values(null,#{course_title},#{course_desc},#{subject_id})
+	</insert>
+	
+	<update id="update" parameterType="course">
+		update course
+			<set>
+				<if test="course_title!=null">
+					course_title=#{course_title},
+				</if>
+				<if test="course_desc!=null">
+					course_desc=#{course_desc},
+				</if>
+				<if test="subject_id!=null">
+					subject_id=#{subject_id}
+				</if>
+			</set>
+			where id=#{id}
+	</update>
+	
+	<delete id="delete">
+		delete from course where id in
+			<foreach open="(" collection="array" item="id" index="i" separator="," close=")">
+				#{id}
+			</foreach>
+	</delete>
+	
+	<select id="selectById" resultType="course">
+		select * from course where id=#{id}
+	</select>
+	
+	<select id="selectAll" resultType="course">
+		select * from course
+	</select>
+	
+	<resultMap type="coursec" id="coursecMap">
+		<id column="id" property="id"/>
+		<result column="course_title" property="course_title"/>
+		<result column="course_desc" property="course_desc"/>
+		<result column="subject_id" property="subject_id"/>
+		<association property="subject" column="subject_id" select="com.zhiyou.mapper.SubjectMapper.selectById"></association>	
+	</resultMap>
+	
+	<select id="selectAllLimit" resultMap="coursecMap">
+		select * from course limit #{0},#{1}
+	</select>
+	
+	<select id="selectCount" resultType="int">
+		select count(*) from course
+	</select>
+	
+	<select id="selectBySubject" resultType="course">
+		select * from course where subject_id=#{subject_id}
+	</select>
+</mapper>
+

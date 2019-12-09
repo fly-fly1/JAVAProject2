@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper  
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace: 代表这个文件的命名空间,根据这个名称可以定位到这个文件 -->
+<mapper namespace="com.zhiyou.mapper.SpeakerMapper">
+	<insert id="add" parameterType="speaker">
+		insert into speaker values(null,#{speaker_name},#{speaker_desc},#{speaker_job},#{pic_url})
+	</insert>
+	
+	<update id="update" parameterType="speaker">
+		update speaker
+			<set>
+				<if test="speaker_name!=null">
+					speaker_name=#{speaker_name},
+				</if>
+				<if test="speaker_desc!=null">
+					speaker_desc=#{speaker_desc},
+				</if>
+				<if test="speaker_job!=null">
+					speaker_job=#{speaker_job},
+				</if>
+				<if test="pic_url!=null">
+					pic_url=#{pic_url}
+				</if>
+			</set>
+			where id=#{id}
+	</update>
+	
+	<delete id="delete">
+		delete from speaker where id in
+			<foreach open="(" collection="array" item="id" index="i" separator="," close=")">
+				#{id}
+			</foreach>
+	</delete>
+	
+	<select id="selectById" resultType="speaker">
+		select * from speaker where id=#{id}
+	</select>
+	
+	<select id="selectAll" resultType="speaker">
+		select * from speaker 
+	</select>
+	
+	<select id="selectAllLimit" resultType="speaker">
+		select * from speaker limit #{0},#{1}
+	</select>
+
+	<select id="selectCount" resultType="int">
+		select count(*) from speaker
+	</select>
+	
+</mapper>
+

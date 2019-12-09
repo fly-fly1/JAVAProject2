@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper  
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace:代表这个文件的命名空间，根据这个名词  可以定位到这个文件-->
+<mapper namespace="com.zhiyou.mapper.AdminMapper">
+	
+	<select id="selectByAccounts" resultType="admin">
+		select * from admin where accounts = #{accounts}
+	</select>
+</mapper>
+

@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper  
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace: 代表这个文件的命名空间,根据这个名称可以定位到这个文件 -->
+<mapper namespace="com.zhiyou.mapper.VideoMapper">
+	<insert id="add" parameterType="video">
+		insert into video values(null,#{title},#{detail},#{time},#{speaker_id},#{course_id},#{video_url},#{image_url},#{play_num})
+	</insert>
+	
+	<update id="update" parameterType="video">
+		update video
+			<set>
+				<if test="title!=null">
+					title=#{title},
+				</if>
+				<if test="detail!=null">
+					detail=#{detail},
+				</if>
+				<if test="time!=null">
+					time=#{time},
+				</if>
+				<if test="speaker_id!=null">
+					speaker_id=#{speaker_id},
+				</if>
+				<if test="course_id!=null">
+					course_id=#{course_id},
+				</if>
+				<if test="video_url!=null">
+					video_url=#{video_url},
+				</if>
+				<if test="image_url!=null">
+					image_url=#{image_url},
+				</if>
+				<if test="play_num!=null">
+					play_num=#{play_num}
+				</if>
+			</set>
+			where video_id=#{video_id}
+	</update>
+
+	<delete id="delete">
+		delete from video where video_id in
+			<foreach open="(" collection="array" item="video_id" index="i" separator="," close=")">
+				#{video_id}
+			</foreach>
+	</delete>
+	
+	<!-- 会产生n+1问题，适合项目的数据量大时使用 -->
+	<resultMap type="video" id="videoMap">
+		<id column="video_id" property="video_id"/>
+		<result column="title" property="title"/>
+		<result column="detail" property="detail"/>
+		<result column="time" property="time"/>
+		<result column="speaker_id" property="speaker_id"/>
+		<result column="course_id" property="course_id"/>
+		<result column="video_url" property="video_url"/>
+		<result column="image_url" property="image_url"/>
+		<result column="play_num" property="play_num"/>	
+		<association property="speaker" column="speaker_id" select="com.zhiyou.mapper.SpeakerMapper.selectById"></association>
+		<association property="course" column="course_id" select="com.zhiyou.mapper.CourseMapper.selectById"></association>		
+	</resultMap>
+
+	<select id="selectAll" resultMap="videoMap">
+		select * from video limit #{0},#{1}
+	</select>
+	
+	<select id="selectById" resultMap="videoMap">
+		select * from video where video_id=#{video_id}
+	</select>
+	
+	<select id="selectLike" resultMap="videoMap">
+		select * from video where title like concat('%',#{0},'%') and speaker_id=#{1} and course_id=#{2} limit #{3},#{4}
+	</select>
+	
+	<select id="selectCount" resultType="int">
+		select count(*) from video
+	</select>
+	
+	<select id="selectCountLike" resultType="int">
+		select count(*) from video where title like concat('%',#{0},'%') and speaker_id=#{1} and course_id=#{2}
+	</select>
+	
+	<select id="selectByCourse" resultType="videos">
+		select * from video where course_id=#{course_id}
+	</select>
+	
+	<select id="selectBySpeaker" resultType="videos">
+		select * from video where speaker_id=#{speaker_id}
+	</select>
+</mapper>
+
